@@ -64,7 +64,11 @@
                                         <input type="date" name="end_date" id="end_date" class="form-control" required>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Generate Summaries</button>
+                                <div class="col-md-3">
+                                    <div class="input-group input-group-static mb-4">
+                                        <button type="submit" class="btn btn-primary">Generate Summaries</button>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     @endcan
