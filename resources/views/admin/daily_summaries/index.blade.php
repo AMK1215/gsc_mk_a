@@ -51,13 +51,17 @@
                     @can('owner_access')
                         <form method="POST" action="{{ route('admin.generate_daily_sammary') }}" class="date-filter-form">
                             @csrf
-                            <div class="form-group">
-                                <label for="start_date">Start Date</label>
-                                <input type="date" name="start_date" id="start_date" class="form-control" required>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label for="start_date">Start Date</label>
+                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="end_date">End Date</label>
-                                <input type="date" name="end_date" id="end_date" class="form-control" required>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-static mb-4">
+                                    <label for="end_date">End Date</label>
+                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">Generate Summaries</button>
                         </form>
