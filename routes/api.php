@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Bank\BankController;
 use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\ContactController;
+use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
+use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Http\Controllers\Api\V1\NewVersion\PlaceBetWebhookController;
 use App\Http\Controllers\Api\V1\Player\DepositController;
 use App\Http\Controllers\Api\V1\Player\PlayerTransactionLogController;
@@ -26,8 +28,6 @@ use App\Http\Controllers\Api\V1\Webhook\Gsc\MobileLoginController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\PushBetController;
 use App\Http\Controllers\Api\V1\Webhook\Gsc\RollbackController;
-use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
-use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Models\Admin\Role;
 use Illuminate\Support\Facades\Route;
 
@@ -58,7 +58,6 @@ Route::group(['prefix' => 'Seamless'], function () {
     // });
 });
 
-
 Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function () {
 
     //games api
@@ -66,7 +65,7 @@ Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function (
     Route::get('providers/{id}', [GameController::class, 'gameTypeProducts']);
     Route::get('game_lists/{product_id}/{game_type_id}', action: [GameController::class, 'gameList']);
     Route::get('hot_games', [GameController::class, 'HotgameList']);
-     Route::get('wager-logs', [WagerController::class, 'index']);
+    Route::get('wager-logs', [WagerController::class, 'index']);
     Route::get('transactions', [TransactionController::class, 'index']);
 
     //auth api

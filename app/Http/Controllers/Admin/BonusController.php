@@ -134,7 +134,7 @@ class BonusController extends Controller
 
         return Bonus::with('user')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('created_at', [$startDate, $endDate]);
+                $query->whereBetween('created_at', [$startDate, $endDate]);
             })
             ->when($request->agent_id, function ($query) use ($request) {
                 $query->where('agent_id', $request->agent_id);
