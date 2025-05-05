@@ -269,9 +269,13 @@ class ReportController extends Controller
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
 
         $hierarchy = [
-            'Owner' => ['Master', 'Agent', 'Sub Agent'],
-            'Master' => ['Agent', 'Sub Agent'],
-            'Agent' => ['Sub Agent'],
+             'Owner' => ['Master', 'Agent', 'Sub Agent', 'Player'],
+            'Master' => ['Agent', 'Sub Agent', 'Player'],
+            'Agent' => ['Sub Agent', 'Player'],
+            'Sub Agent' => ['Player'],
+            // 'Owner' => ['Master', 'Agent', 'Sub Agent'],
+            // 'Master' => ['Agent', 'Sub Agent'],
+            // 'Agent' => ['Sub Agent'],
         ];
 
         $query = DB::table('reports')
