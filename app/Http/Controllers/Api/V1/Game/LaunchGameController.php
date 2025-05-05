@@ -17,6 +17,9 @@ class LaunchGameController extends Controller
 
     public function launchGame(Request $request)
     {
+        Log::info('LaunchGameController:launchGame', [
+            'request' => $request->all(),
+        ]);
         $validatedData = $request->validate([
             'provider_id' => 'required|integer',
             'type_id' => 'required|integer',
