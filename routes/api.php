@@ -40,6 +40,7 @@ Route::get('allGameProducts', [GameController::class, 'allGameProducts']);
 
 Route::delete('/game-lists-delete', [GameController::class, 'deleteGameLists']);
 
+Route::post('/operatorgetgamelist', [GetGameListController::class, 'getGameList']);
 // for slot
 Route::group(['prefix' => 'Seamless'], function () {
     Route::post('GetBalance', [GetBalanceController::class, 'getBalance']);
