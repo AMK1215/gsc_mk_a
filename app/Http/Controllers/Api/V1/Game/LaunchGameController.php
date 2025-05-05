@@ -17,9 +17,10 @@ class LaunchGameController extends Controller
 
     public function launchGame(Request $request)
     {
-        Log::info('LaunchGameController:launchGame', [
-            'request' => $request->all(),
-        ]);
+        // Log::info('LaunchGameController:launchGame', [
+        //     'request' => $request->all(),
+        // ]);
+
         $validatedData = $request->validate([
             'provider_id' => 'required|integer',
             'type_id' => 'required|integer',
@@ -34,6 +35,7 @@ class LaunchGameController extends Controller
         // Generate the signature
         $requestTime = now()->format('YmdHis');
         $signature = md5($operatorCode.$requestTime.'launchgame'.$secretKey);
+
 
         // Prepare the payload
         $data = [
@@ -50,6 +52,11 @@ class LaunchGameController extends Controller
             'Sign' => $signature,
             'RequestTime' => $requestTime,
         ];
+            Log::debug('API Request Details', [
+        'url' => $apiUrl,
+        'payload' => $data,
+        'full_request' => $request->all()
+        ]);
         try {
             // Send the request
             $response = Http::withHeaders([
