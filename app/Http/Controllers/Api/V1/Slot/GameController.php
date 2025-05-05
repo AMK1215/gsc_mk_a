@@ -93,18 +93,18 @@ class GameController extends Controller
         $validated = $request->validate([
             'game_type_id' => 'required|integer',
             'product_id' => 'required|integer',
-            'game_provide_name' => 'required|string|max:100',
+            //'game_provide_name' => 'required|string|max:100',
         ]);
 
         $gameTypeId = $validated['game_type_id'];
         $productId = $validated['product_id'];
-        $gameProvideName = $validated['game_provide_name'];
+        //$gameProvideName = $validated['game_provide_name'];
 
         // Perform the deletion
         $deleted = DB::table('game_lists')
             ->where('game_type_id', $gameTypeId)
             ->where('product_id', $productId)
-            ->where('game_provide_name', $gameProvideName)
+            //->where('game_provide_name', $gameProvideName)
             ->delete();
 
         if ($deleted) {
