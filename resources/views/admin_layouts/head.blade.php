@@ -7,7 +7,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{{ 'admin_app/assets/img/apple-icon.png' }}">
     <link rel="icon" href="{{ asset('/assets/img/logo.png') }}">
     <title>
-        SUPERMAN
+        Monkey King
     </title>
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"
@@ -16,14 +16,13 @@
     <link href="{{ asset('admin_app/assets/css/nucleo-icons.css') }}" rel="stylesheet" />
     <link href="{{ asset('admin_app/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <link rel="stylesheet" 
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('admin_app/assets/css/material-dashboard.css?v=3.0.6') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="{{asset('admin_app/assets/css/flatpickr.min.css')}}">
+    <link rel="stylesheet" href="{{ asset('admin_app/assets/css/flatpickr.min.css') }}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 
     <!-- Nepcha Analytics (nepcha.com) -->
