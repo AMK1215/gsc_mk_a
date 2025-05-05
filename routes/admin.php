@@ -25,7 +25,7 @@ use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\TransferLog\TransferLogController;
 use App\Http\Controllers\Admin\WithDraw\WithDrawRequestController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\ReportV2Controller;
 use App\Http\Controllers\ResultArchiveController;
 use App\Models\Admin\Role;
@@ -125,8 +125,11 @@ Route::group([
 
     Route::get('transer-log', [TransferLogController::class, 'index'])->name('transferLog');
     Route::group(['prefix' => 'report'], function () {
-        Route::get('index', [ReportController::class, 'index'])->name('report.index');
-        Route::get('/detail/{playerId}', [ReportController::class, 'detail'])->name('report.detail');
+        // Route::get('index', [ReportController::class, 'index'])->name('report.index');
+        // Route::get('/detail/{playerId}', [ReportController::class, 'detail'])->name('report.detail');
+        Route::get('report', [ReportController::class, 'index'])->name('report.index');
+        Route::get('reports/details/{player_id}', [ReportController::class, 'getReportDetails'])->name('reports.details');
+        Route::get('reports/player/{player_id}', [ReportController::class, 'getPlayer'])->name('reports.player.index');
     });
 
     Route::group(['prefix' => 'reportv2'], function () {
