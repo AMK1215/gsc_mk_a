@@ -23,24 +23,18 @@
             </li>
         @endcan
         @can('owner_access')
-            <li class="nav-item menu-open">
-                <a href="{{ route('admin.daily_summaries.index') }}"
-                    class="nav-link {{ Route::current()->getName() == 'admin.daily_summaries.index' ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>
-                        Daily Report
-                    </p>
+            <li class="nav-item">
+                <a class="nav-link text-white " href="{{ route('admin.daily_summaries.index') }}">
+                    <span class="sidenav-mini-icon"> <i class="fa-solid fa-chart-column"></i> </span>
+                    <span class="sidenav-normal  ms-2  ps-1"> Daily Total Report </span>
                 </a>
             </li>
         @endcan
         @can('owner_access')
-            <li class="nav-item menu-open">
-                <a href="{{ route('admin.seamless_transactions.index') }}"
-                    class="nav-link {{ Route::current()->getName() == 'admin.seamless_transactions.index' ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>
-                        Del SeamlessTransaction
-                    </p>
+            <li class="nav-item">
+                <a class="nav-link text-white " href="{{ route('admin.seamless_transactions.index') }}">
+                    <span class="sidenav-mini-icon"> <i class="fa-solid fa-chart-column"></i> </span>
+                    <span class="sidenav-normal  ms-2  ps-1"> Del SeamlessTransaction </span>
                 </a>
             </li>
         @endcan
