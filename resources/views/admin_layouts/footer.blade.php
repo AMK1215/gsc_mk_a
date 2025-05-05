@@ -8,7 +8,7 @@
                         document.write(new Date().getFullYear())
                     </script>,
                     by
-                    <a href="#" target="_blank" class="font-weight-bold" target="_blank">Monkey King</a>
+                    <a href="#" target="_blank" class="font-weight-bold" target="_blank">Money King</a>
                 </div>
             </div>
             {{-- <div class="col-lg-6">

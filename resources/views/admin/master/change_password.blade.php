@@ -51,7 +51,7 @@
     <script>
         var errorMessage = @json(session('error'));
         var successMessage = @json(session('success'));
-        var url = 'https://superman788.online/login';
+        var url = 'https://moneyking77.online/login';
         var name = @json(session('username'));
         var pw = @json(session('password'));
 
@@ -92,7 +92,7 @@
                 timer: 1500
             })
         @endif
-        
+
         function copy() {
             var username = $('#tusername').text();
             var password = $('#tpassword').text();

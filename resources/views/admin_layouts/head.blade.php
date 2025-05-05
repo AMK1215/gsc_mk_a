@@ -5,9 +5,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="76x76" href="{{ 'admin_app/assets/img/apple-icon.png' }}">
-    <link rel="icon" href="{{ asset('/assets/img/logo.png') }}">
+    <link rel="icon" href="{{ asset('/assets/img/logo-mk.png') }}">
     <title>
-        Monkey King
+        Money King
     </title>
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css"
