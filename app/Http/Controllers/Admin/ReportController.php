@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Admin\Product;
+use App\Models\Admin\ReportTransaction;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Admin\ReportTransaction;
 
 class ReportController extends Controller
 {
@@ -182,10 +182,9 @@ class ReportController extends Controller
 
         $owner = auth()->user();
 
-        $reportData = $this->getShanReportQuery($owner,$startDate,$endDate);
+        $reportData = $this->getShanReportQuery($owner, $startDate, $endDate);
 
-        $filteredReports =  $reportData->paginate(50);
-
+        $filteredReports = $reportData->paginate(50);
 
         $totalBet = $filteredReports->sum('bet_amount');
 
@@ -193,15 +192,15 @@ class ReportController extends Controller
         $totalNetWin = 0;
 
         foreach ($filteredReports as $row) {
-            if($row->status != 1) {
-                if($row->transaction_amount < 0) {
+            if ($row->status != 1) {
+                if ($row->transaction_amount < 0) {
                     $payout = $row->transaction_amount;
                 } else {
                     $payout = 0;
                 }
 
-                if($payout == 0) {
-                    $netWin = - $row->bet_amount;
+                if ($payout == 0) {
+                    $netWin = -$row->bet_amount;
                 } else {
                     $netWin = $row->transaction_amount - $row->bet_amount;
                 }
@@ -220,10 +219,11 @@ class ReportController extends Controller
             'total_netWin' => $totalNetWin,
         ];
 
-        return view('admin.report.shan.index',compact('filteredReports','data'));
+        return view('admin.report.shan.index', compact('filteredReports', 'data'));
     }
 
-    public function shanReportDetail($id) {
+    public function shanReportDetail($id)
+    {
         $owner = auth()->user();
 
         // if($owner->hasRole('Senior Owner')) {
@@ -269,7 +269,7 @@ class ReportController extends Controller
         $endDate = $request->end_date ?? Carbon::today()->endOfDay()->toDateString();
 
         $hierarchy = [
-             'Owner' => ['Master', 'Agent', 'Sub Agent', 'Player'],
+            'Owner' => ['Master', 'Agent', 'Sub Agent', 'Player'],
             'Master' => ['Agent', 'Sub Agent', 'Player'],
             'Agent' => ['Sub Agent', 'Player'],
             'Sub Agent' => ['Player'],
@@ -296,7 +296,7 @@ class ReportController extends Controller
             ->when($request->player_id, fn ($query) => $query->where('users.user_name', $request->player_id))
             ->whereBetween('reports.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
 
-        if ($agent->hasRole('Senior Owner')) {
+        if ($agent->hasRole('Owner')) {
             $result = $query;
         } elseif ($agent->hasRole('Agent')) {
             $agentChildrenIds = $agent->children->pluck('id')->toArray();
@@ -306,9 +306,7 @@ class ReportController extends Controller
             $result = $query->whereIn('users.id', $agentChildrenIds);
         }
 
-
-
-        return $result->groupBy('users.id', 'users.name', 'users.user_name','users.agent_id','parent_users.user_name')->get();
+        return $result->groupBy('users.id', 'users.name', 'users.user_name', 'users.agent_id', 'parent_users.user_name')->get();
     }
 
     private function getPlayerDetails($playerId, $request)
@@ -347,7 +345,8 @@ class ReportController extends Controller
         return $children->flatMap->children;
     }
 
-    private function getShanReportQuery ($owner,$startDate,$endDate) {
+    private function getShanReportQuery($owner, $startDate, $endDate)
+    {
         $query = DB::table('users as so')
             ->Leftjoin('users as o', 'o.agent_id', '=', 'so.id')
             ->Leftjoin('users as s', 's.agent_id', '=', 'o.id')          // senior
@@ -356,9 +355,9 @@ class ReportController extends Controller
             ->Leftjoin('users as p', 'p.agent_id', '=', 'a.id')          // player
             ->join('report_transactions as rt', 'rt.user_id', '=', 'p.id')
             ->orderBy('rt.created_at', 'desc')
-            ->whereBetween('rt.created_at',[$startDate .' 00:00:00', $endDate .' 23:59:59']);
-            if($owner->hasRole('Senior Owner')){
-                $query->where('so.id', $owner->id)
+            ->whereBetween('rt.created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59']);
+        if ($owner->hasRole('Senior Owner')) {
+            $query->where('so.id', $owner->id)
                 ->selectRaw('
                 o.user_name as owner_id,
                 s.user_name as senior_id,
@@ -372,8 +371,8 @@ class ReportController extends Controller
                 rt.status,
                 rt.created_at as transaction_date
             ');
-            } elseif($owner->hasRole('Owner')) {
-                $query->whereNotNull('o.id')
+        } elseif ($owner->hasRole('Owner')) {
+            $query->whereNotNull('o.id')
                 ->where('o.id', $owner->id)
                 ->selectRaw('
                 s.user_name as senior_id,
@@ -387,8 +386,8 @@ class ReportController extends Controller
                 rt.status,
                 rt.created_at as transaction_date
             ');
-            } elseif($owner->hasRole('Senior')) {
-                $query->whereNotNull('s.id')
+        } elseif ($owner->hasRole('Senior')) {
+            $query->whereNotNull('s.id')
                 ->where('s.id', $owner->id)
                 ->selectRaw('
                 m.user_name as master_id,
@@ -401,8 +400,8 @@ class ReportController extends Controller
                 rt.status,
                 rt.created_at as transaction_date
             ');
-            } elseif($owner->hasRole('Master')) {
-                $query->whereNotNull('m.id')
+        } elseif ($owner->hasRole('Master')) {
+            $query->whereNotNull('m.id')
                 ->where('m.id', $owner->id)
                 ->selectRaw('
                 a.user_name as agent_id,
@@ -414,8 +413,8 @@ class ReportController extends Controller
                 rt.status,
                 rt.created_at as transaction_date
             ');
-            }  elseif($owner->hasRole('Agent')) {
-                $query->whereNotNull('a.id')
+        } elseif ($owner->hasRole('Agent')) {
+            $query->whereNotNull('a.id')
                 ->where('a.id', $owner->id)
                 ->selectRaw('
                 p.user_name as player_id,
@@ -426,8 +425,8 @@ class ReportController extends Controller
                 rt.status,
                 rt.created_at as transaction_date
             ');
-            }
+        }
 
-            return $query;
+        return $query;
     }
 }

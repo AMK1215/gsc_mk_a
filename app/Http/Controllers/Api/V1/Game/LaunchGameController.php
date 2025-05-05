@@ -36,7 +36,6 @@ class LaunchGameController extends Controller
         $requestTime = now()->format('YmdHis');
         $signature = md5($operatorCode.$requestTime.'launchgame'.$secretKey);
 
-
         // Prepare the payload
         $data = [
             'OperatorCode' => $operatorCode,
@@ -52,10 +51,10 @@ class LaunchGameController extends Controller
             'Sign' => $signature,
             'RequestTime' => $requestTime,
         ];
-            Log::debug('API Request Details', [
-        'url' => $apiUrl,
-        'payload' => $data,
-        'full_request' => $request->all()
+        Log::debug('API Request Details', [
+            'url' => $apiUrl,
+            'payload' => $data,
+            'full_request' => $request->all(),
         ]);
         try {
             // Send the request
