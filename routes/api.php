@@ -5,8 +5,6 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Bank\BankController;
 use App\Http\Controllers\Api\V1\BannerController;
 use App\Http\Controllers\Api\V1\ContactController;
-//use App\Http\Controllers\Api\V1\Game\LaunchGameController;
-use App\Http\Controllers\Api\V1\GetBalanceController;
 use App\Http\Controllers\Api\V1\NewVersion\PlaceBetWebhookController;
 use App\Http\Controllers\Api\V1\Player\DepositController;
 use App\Http\Controllers\Api\V1\Player\PlayerTransactionLogController;
@@ -16,19 +14,20 @@ use App\Http\Controllers\Api\V1\Player\WagerController;
 use App\Http\Controllers\Api\V1\Player\WithDrawController;
 use App\Http\Controllers\Api\V1\PromotionController;
 use App\Http\Controllers\Api\V1\Slot\GameController;
-use App\Http\Controllers\Api\V1\Slot\GetDaySummaryController;
-use App\Http\Controllers\Api\V1\Slot\GetGameListByProviderController;
-use App\Http\Controllers\Api\V1\Slot\GetGameProviderController;
-use App\Http\Controllers\Api\V1\Slot\LaunchGameController;
-use App\Http\Controllers\Api\V1\Webhook\AdjustmentController;
-use App\Http\Controllers\Api\V1\Webhook\BetController;
-use App\Http\Controllers\Api\V1\Webhook\BetNResultController;
-use App\Http\Controllers\Api\V1\Webhook\BetResultController;
-use App\Http\Controllers\Api\V1\Webhook\CancelBetController;
-use App\Http\Controllers\Api\V1\Webhook\CancelBetNewVersionController;
-use App\Http\Controllers\Api\V1\Webhook\CancelBetNResultController;
-use App\Http\Controllers\Api\V1\Webhook\RewardController;
-use App\Http\Controllers\TestController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\BonusController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\BuyInController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\BuyOutController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\CancelBetController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\GameResultController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\GetBalanceController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\GetGameListController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\JackPotController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\MobileLoginController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\PushBetController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\RollbackController;
+use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
+use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Models\Admin\Role;
 use Illuminate\Support\Facades\Route;
 
@@ -38,26 +37,27 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('v1/validate', [AuthController::class, 'callback']);
 Route::get('gameTypeProducts/{id}', [GameController::class, 'gameTypeProducts']);
 Route::get('allGameProducts', [GameController::class, 'allGameProducts']);
-Route::post('Seamless/PullReport', [LaunchGameController::class, 'pullReport']);
-// sameless route
-Route::post('GetBalance', [GetBalanceController::class, 'getBalance']);
-Route::post('BetNResult', [BetNResultController::class, 'handleBetNResult']);
-Route::post('CancelBetNResult', [CancelBetNResultController::class, 'handleCancelBetNResult']);
-Route::post('Bet', [BetController::class, 'handleBet']);
-Route::post('Result', [BetResultController::class, 'handleResult']);
-//Route::post('CancelBet', [CancelBetController::class, 'handleCancelBet']);
-Route::post('CancelBet', [CancelBetNewVersionController::class, 'handleCancelBet']);
 
-Route::post('Adjustment', [AdjustmentController::class, 'handleAdjustment']);
-Route::post('Reward', [RewardController::class, 'handleReward']);
-Route::post('TransactionDetail', [TransactionController::class, 'transactionDetails']);
-
-Route::post('GetGameProvider', [GetGameProviderController::class, 'fetchGameProviders']);
-Route::post('GetGameListByProvider', [GetGameListByProviderController::class, 'fetchGameListByProvider']);
 Route::delete('/game-lists-delete', [GameController::class, 'deleteGameLists']);
 
 // for slot
-Route::post('/transaction-details/{tranId}', [GetDaySummaryController::class, 'getTransactionDetails']);
+Route::group(['prefix' => 'Seamless'], function () {
+    Route::post('GetBalance', [GetBalanceController::class, 'getBalance']);
+    Route::post('PlaceBet', [PlaceBetController::class, 'placeBet']);
+    Route::post('GameResult', [GameResultController::class, 'gameResult']);
+    Route::post('Rollback', [RollbackController::class, 'rollback']);
+    // // Route::group(["middleware" => ["webhook_log"]], function(){
+    // // Route::post('GetGameList', [LaunchGameController::class, 'getGameList']);
+    Route::post('CancelBet', [CancelBetController::class, 'cancelBet']);
+    Route::post('BuyIn', [BuyInController::class, 'buyIn']);
+    Route::post('BuyOut', [BuyOutController::class, 'buyOut']);
+    Route::post('PushBet', [PushBetController::class, 'pushBet']);
+    Route::post('Bonus', [BonusController::class, 'bonus']);
+    Route::post('Jackpot', [JackPotController::class, 'jackPot']);
+    Route::post('MobileLogin', [MobileLoginController::class, 'MobileLogin']);
+    // });
+});
+
 
 Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function () {
 
@@ -66,8 +66,7 @@ Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function (
     Route::get('providers/{id}', [GameController::class, 'gameTypeProducts']);
     Route::get('game_lists/{product_id}/{game_type_id}', action: [GameController::class, 'gameList']);
     Route::get('hot_games', [GameController::class, 'HotgameList']);
-    Route::post('GameLogin', [LaunchGameController::class, 'LaunchGame']);
-    Route::get('wager-logs', [WagerController::class, 'index']);
+     Route::get('wager-logs', [WagerController::class, 'index']);
     Route::get('transactions', [TransactionController::class, 'index']);
 
     //auth api
@@ -94,15 +93,15 @@ Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function (
         Route::get('withdraw-log', [TransactionController::class, 'withDrawRequestLog']);
     });
 
-    // Route::group(['prefix' => 'bank'], function () {
-    //     Route::get('all', [BankController::class, 'all']);
-    // });
-    // Route::group(['prefix' => 'game'], function () {
-    //     Route::post('Seamless/LaunchGame', [LaunchGameController::class, 'launchGame']);
-    // });
-    // Route::group(['prefix' => 'direct'], function () {
-    //     Route::post('Seamless/LaunchGame', [LaunchGameController::class, 'directLaunchGame']);
-    // });
+    Route::group(['prefix' => 'game'], function () {
+        Route::post('Seamless/LaunchGame', [LaunchGameController::class, 'launchGame']);
+        Route::get('gamelist/{provider_id}/{game_type_id}', [GameController::class, 'gameList']);
+    });
+
+    Route::group(['prefix' => 'direct'], function () {
+        Route::post('Seamless/LaunchGame', [DirectLaunchGameController::class, 'launchGame']);
+    });
+
 });
 
 Route::get('/game/gamelist/{provider_id}/{game_type_id}', [GameController::class, 'gameList']);

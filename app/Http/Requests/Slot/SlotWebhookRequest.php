@@ -3,9 +3,9 @@
 namespace App\Http\Requests\Slot;
 
 use App\Models\User;
-use App\Services\SlotWebhookValidator;
+use App\Services\Slot\SeamlessTransactionWebhookValidator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class SlotWebhookRequest extends FormRequest
 {
@@ -24,55 +24,105 @@ class SlotWebhookRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    // public function rules(): array
+    // {
+    //     $transaction_rules = [];
+
+    //     if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+    //         $transaction_rules['Transactions'] = ['nullable'];
+    //         if ($this->getMethodName() !== 'getbalance') {
+    //             $transaction_rules['Transaction'] = ['required'];
+    //         }
+    //     } else {
+    //         $transaction_rules['Transactions'] = ['required'];
+    //     }
+
+    //     return [
+    //         'MemberName' => ['required'],
+    //         'OperatorCode' => ['required'],
+    //         'ProductID' => ['required'],
+    //         'MessageID' => ['required'],
+    //         'RequestTime' => ['required'],
+    //         'Sign' => ['required'],
+    //         ...$transaction_rules,
+    //     ];
+    // }
+
     public function rules(): array
     {
-        return [
+        $transaction_rules = [];
 
+        if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+            $transaction_rules['Transactions'] = ['nullable'];
+            if ($this->getMethodName() !== 'getbalance') {
+                $transaction_rules['Transaction'] = ['required'];
+            }
+        } else {
+            $transaction_rules['Transactions'] = ['required', 'array'];
+            // Add validation for each transaction in the Transactions array
+            $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string'];
+        }
+
+        return [
+            'MemberName' => ['required'],
+            'OperatorCode' => ['required'],
+            'ProductID' => ['required'],
+            'MessageID' => ['required'],
+            'RequestTime' => ['required'],
+            'Sign' => ['required'],
+            ...$transaction_rules,
         ];
     }
 
     public function check()
     {
-        $validator = SlotWebhookValidator::make($this)->validate();
+        $validator = SeamlessTransactionWebhookValidator::make($this)->validate();
 
         return $validator;
     }
 
     public function getMember()
     {
-        $playerId = $this->getMemberName();
+        if (! isset($this->member)) {
+            $this->member = User::where('user_name', $this->getMemberName())->first();
+        }
 
-        return User::where('user_name', $playerId)->first();
+        return $this->member;
     }
 
     public function getMemberName()
     {
-        return $this->get('PlayerId');
+        return $this->get('MemberName');
+    }
+
+    public function getProductID()
+    {
+        return $this->get('ProductID');
+    }
+
+    public function getMessageID()
+    {
+        return $this->get('MessageID');
     }
 
     public function getMethodName()
     {
-        return str($this->url())->explode('/')->last();
+        return strtolower(str($this->url())->explode('/')->last());
     }
 
     public function getOperatorCode()
     {
-        return $this->get('OperatorId');
+        return $this->get('OperatorCode');
     }
 
     public function getRequestTime()
     {
-        return $this->get('RequestDateTime');
+        return $this->get('RequestTime');
     }
 
     public function getSign()
     {
-        return $this->get('Signature');
-    }
-
-    public function test()
-    {
-        return 'test';
+        return $this->get('Sign');
     }
 
     public function getTransactions()
