@@ -15,7 +15,7 @@
         <!-- End Navbar -->
         <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-lg-12 position-relative z-index-2">
+                <div class="col-lg-12 ">
                     @yield('content')
                 </div>
             </div>
@@ -23,6 +23,7 @@
         </div>
     </main>
     @include('admin_layouts.setting')
+
     <!--   Core JS Files   -->
     <script src="{{ asset('admin_app/assets/js/jquery.min.js') }}"></script>
     <script src="{{ asset('admin_app/assets/js/flatpickr.js') }}"></script>

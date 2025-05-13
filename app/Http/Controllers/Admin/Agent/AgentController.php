@@ -204,6 +204,7 @@ class AgentController extends Controller
             $inputs = $request->validated();
             $agent = User::findOrFail($id);
             $admin = Auth::user();
+
             $cashIn = $inputs['amount'];
             if ($cashIn > $admin->balanceFloat) {
                 throw new \Exception('You do not have enough balance to transfer!');

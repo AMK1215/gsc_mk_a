@@ -128,14 +128,123 @@
                 </a>
               </td>
               <td>
-                <a href="{{ route('admin.player.getCashIn', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Deposit To Player" class="btn btn-info btn-sm">
-                  <i class="fas fa-plus text-white me-1"></i>
-                  Dep
-                </a>
-                <a href="{{ route('admin.player.getCashOut', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="WithDraw To Player" class="btn btn-info btn-sm">
-                  <i class="fas fa-minus text-white me-1"></i>
-                  WDL
-                </a>
+
+                <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                data-bs-target="#cashInModal{{ $user->id }}">
+                + Deposit
+            </button>
+
+            <div class="modal fade" id="cashInModal{{ $user->id }}" tabindex="-1"
+                aria-labelledby="cashInModalLabel" aria-hidden="true"
+                style="z-index: 1050 !important;">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title"
+                                id="cashInModalLabel{{ $user->id }}">Deposit To
+                                Player</h5>
+                            <button type="button" class="btn-close"
+                                data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form
+                                action="{{ route('admin.player.getCashIn', $user->id) }}"
+                                method="POST">
+                                @csrf
+
+                                <div
+                                    class="input-group input-group-outline is-valid my-3">
+                                    <label class="form-label mb-2">Amount</label>
+                                    <input type="text" class="form-control"
+                                        name="amount" required>
+                                </div>
+                                @error('amount')
+                                    <span
+                                        class="d-block text-danger">*{{ $message }}</span>
+                                @enderror
+
+
+                                <div
+                                    class="input-group input-group-outline is-valid my-3">
+                                    <label class="form-label mb-2">Addition Note
+                                        (optional)</label>
+                                    <input type="text" class="form-control"
+                                        name="note">
+                                </div>
+                                @error('note')
+                                    <span
+                                        class="d-block text-danger">*{{ $message }}</span>
+                                @enderror
+
+                                <div class="text-center"><button
+                                        class="btn btn-sm btn-success">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+                <button type="button" class="btn btn-info btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cashOutModal{{ $user->id }}">
+                    - Withdraw
+                </button>
+
+                <div class="modal fade" id="cashOutModal{{ $user->id }}"
+                    tabindex="-1" aria-labelledby="cashOutModalLabel"
+                    aria-hidden="true" style="z-index: 1050 !important;">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"
+                                    id="cashOutModalLabel{{ $user->id }}">Withdraw
+                                    To
+                                    Player</h5>
+                                <button type="button" class="btn-close"
+                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form
+                                    action="{{ route('admin.player.makeCashOut', $user->id) }}"
+                                    method="POST">
+                                    @csrf
+
+                                    <div
+                                        class="input-group input-group-outline is-valid my-3">
+                                        <label class="form-label mb-2">Amount</label>
+                                        <input type="text" class="form-control"
+                                            name="amount" required>
+                                    </div>
+                                    @error('amount')
+                                        <span
+                                            class="d-block text-danger">*{{ $message }}</span>
+                                    @enderror
+
+
+                                    <div
+                                        class="input-group input-group-outline is-valid my-3">
+                                        <label class="form-label mb-2">Addition Note
+                                            (optional)</label>
+                                        <input type="text" class="form-control"
+                                            name="note">
+                                    </div>
+                                    @error('note')
+                                        <span
+                                            class="d-block text-danger">*{{ $message }}</span>
+                                    @enderror
+
+                                    <div class="text-center"><button
+                                            class="btn btn-sm btn-success">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <a href="{{ route('admin.logs', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Reports" class="btn btn-info btn-sm">
                   <i class="fas fa-right-left text-white me-1"></i>

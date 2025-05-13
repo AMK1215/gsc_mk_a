@@ -61,6 +61,7 @@ class PlayerController extends Controller
             ->orderByDesc('id')
             ->get();
 
+            // dd($users);
         return view('admin.player.index', compact('users', 'agents'));
     }
 
@@ -331,7 +332,7 @@ class PlayerController extends Controller
 
         $nextNumber = $latestPlayer ? intval(substr($latestPlayer->user_name, 3)) + 1 : 1;
 
-        return 'SPM'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+        return 'MKM'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     private function getRefrenceId($prefix = 'REF')
