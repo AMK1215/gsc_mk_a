@@ -7,19 +7,33 @@
             <div class="card-header pb-0">
                 <div class="d-lg-flex">
                     <div>
-                        <h5 class="mb-0">Game List Dashboards
-                           
+                        <h5 class="mb-4">Game List Dashboards
                         </h5>
                     </div>
                     <div class="ms-auto my-auto mt-lg-0 mt-4">
 
                     </div>
                 </div>
+                <form role="form" class="text-start mt-4" action="{{route('admin.gameLists.index')}}" method="GET">
+                    <div class="row ml-5">
+
+                        <div class="col-4">
+                                <label class="form-label text-dark fw-bold" for="inputEmail1">Search </label>
+                                <input type="text" class="form-control border border-1 border-secondary px-2"
+                                    id="" name="game_name" value="{{request()->game_name }}">
+                        </div>
+
+                        <div class="col-4">
+                            <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Search</button>
+                            <a href="{{route('admin.gameLists.index')}}" class="btn btn-warning" style="margin-top: 32px;">Refresh</a>
+                        </div>
+                    </div>
+                </form>
             </div>
             <div class="table-responsive">
                 <table class="table table-flush" id="users-search">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th>#</th>
                             <th class="bg-success text-white">Game Type</th>
                             <th class="bg-danger text-white">Product</th>
@@ -31,9 +45,51 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @if(isset($gameLists))
+                        @foreach($gameLists as $index => $game)
+                            <tr class="text-center">
+                                <td>{{ ($gameLists->currentPage() - 1) * $gameLists->perPage() + $loop->iteration }}</td>
+                                <td>{{ $game->gameType->name ?? 'N/A' }}</td>
+                                <td>{{ $game->product->name }}</td>
+                                <td>{{ $game->name }}</td>
+                                <td>
+                                    <img src="{{$game->image_url}}" width="100px" />
+                                </td>
+                                <td>
+                                    {!! $game->status == 1
+                                        ? '<span class="badge badge-success">Open</span>'
+                                        : '<span class="badge badge-danger">Close</span>' !!}
+                                </td>
+                                <td>
+                                    {!! $game->hot_status == 1
+                                        ? '<span class="badge badge-info">HotGame</span>'
+                                        : '<span class="badge badge-warning">NormalGame</span>' !!}
+                                </td>
+                                <td>
+                                    <form action="{{ route('admin.gameLists.toggleStatus', $game->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-info btn-sm">GameStatus</button>
+                                    </form>
+                                    <form action="{{ route('admin.HotGame.toggleStatus', $game->id) }}" method="POST" style="display:inline;">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-sm">HotGame</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                        @endif
                     </tbody>
                 </table>
-            
+                @if(isset($gameLists))
+         <div class="d-flex justify-content-center mt-3">
+    {{ $gameLists->links() }}
+</div>
+                @endif
+
+
+
             </div>
         </div>
     </div>

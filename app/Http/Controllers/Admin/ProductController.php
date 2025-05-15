@@ -22,6 +22,7 @@ class ProductController extends Controller
             $query->orderBy('order', 'asc');
         }])->get();
 
+
         // Initialize an array to store providers
         $providers = [];
 
@@ -31,8 +32,9 @@ class ProductController extends Controller
                 // Clone the product and append game_type
                 $productClone = clone $product;
                 $provider = new $product;
-                $provider->name = $productClone->provider_name;
-                $provider->code = $productClone->provider_code;
+                $provider->id = $productClone->id;
+                $provider->name = $productClone->name;
+                $provider->code = $productClone->code;
                 $provider->order = $productClone->order;
                 $provider->status = $productClone->status;
                 $provider->image = $productClone->imgUrl;
@@ -42,6 +44,7 @@ class ProductController extends Controller
             }
         }
         $products = collect($providers);
+
 
         // Transform the products using a resource
         // $products = GameProviderResource::collection($providers);
@@ -95,6 +98,7 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
+
         $product = Product::find($id);
 
         return view('admin.product.edit', compact('product'));
@@ -105,6 +109,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id)
     {
+
         $product = Product::find($id);
 
         $product->update([

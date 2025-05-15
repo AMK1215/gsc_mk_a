@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\GameList;
+use App\Models\Admin\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
@@ -49,9 +50,24 @@ class GameListController extends Controller
                 })
                 ->rawColumns(['action', 'status', 'hot_status'])
                 ->make(true);
+
         }
 
-        return view('admin.game_list.paginate_index');
+
+        $gameName = request()->game_name;
+
+
+        $query = GameList::with(['gameType', 'product']);
+        if($gameName != null) {
+                $query->where(function($query) use($gameName) {
+                    $query->where('name','like','%'.$gameName.'%');
+                });
+        }
+
+        $gameLists = $query->paginate(100);
+
+
+        return view('admin.game_list.paginate_index',compact('gameLists'));
     }
 
     public function edit($gameTypeId, $productId)

@@ -79,7 +79,7 @@
               <form role="form" class="text-start" action="{{ route('admin.products.update', $product->id) }}" method="post">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="mb-3">
                     <label class="form-label text-dark fw-bold" for="inputEmail1">Name<span class="text-danger">*</span></label>
                     <input type="name" class="form-control border border-1 border-secondary px-2" id="inputEmail1" name="name" placeholder="Enter Product Name" value="{{$product->name}}">
@@ -101,6 +101,8 @@
                     <span class="text-danger d-block">*{{ $message }}</span>
                     @enderror
                 </div>
+
+
                 <div class="">
                   <button class="btn btn-primary" type="submit">Update</button>
                 </div>
@@ -124,7 +126,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     var errorMessage =  @json(session('error'));
     var successMessage =  @json(session('success'));
-   
+
 
     @if(session()->has('success'))
     Swal.fire({

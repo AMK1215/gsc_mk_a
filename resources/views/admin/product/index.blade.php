@@ -29,6 +29,7 @@
               <th>Image</th>
               <th>Status</th>
               <th>Order</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +46,7 @@
                 {{ $product->game_type }}
               </td>
               <td>
-                
+
                 <img src="{{ $product->image }}" width="50px" class="rounded" alt="">
               </td>
               <td>
@@ -55,14 +56,17 @@
                 {{ $product->order }}
               </td>
               <td>
-                {{-- <a href="{{ route('admin.products.edit', $product->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Edit Product"><i class="material-icons-round text-secondary position-relative text-lg">mode_edit</i></a> --}}
-                {{-- <form class="d-inline" action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
+                <a href="{{route('admin.products.edit',$product->id)}}" data-bs-toggle="tooltip" data-bs-original-title="Edit Product"><i class="material-icons-round text-secondary position-relative text-lg">mode_edit</i></a>
+
+                <form class="d-inline" action="{{ route('admin.products.destroy', $product->id) }}" method="POST">
                   @csrf
                   @method('DELETE')
                   <button type="submit" class="transparent-btn" data-bs-toggle="tooltip" data-bs-original-title="Delete Product">
                     <i class="material-icons text-secondary position-relative text-lg">delete</i>
                   </button>
-                </form> --}}
+                </form>
+
+
               </td>
             </tr>
             @endforeach

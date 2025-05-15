@@ -25,9 +25,9 @@ class ProductRequest extends FormRequest
             'name' => ['required', 'min:3', 'string'],
             'code' => ['required', 'min:0', 'integer'],
             'order' => ['nullable', 'min:0', 'integer'],
-            'game_type_id' => ['required', 'array'],
-            'image' => ['required', 'image'],
-            'rate' => ['required'],
+            'game_type_id' => [ 'array','nullable'],
+            'image' => [ 'image','nullable'],
+            'rate' => ['nullable'],
         ];
     }
 }
