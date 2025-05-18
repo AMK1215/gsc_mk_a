@@ -32,7 +32,7 @@ class BonusController extends Controller
         $totalAmount = $this->getRequestsQuery($request, $agentIds)->sum('amount');
 
         $bonusTypes = BonusType::all();
-
+        // dd($agents,$bonuses);
         return view('admin.bonus.index', compact('bonuses', 'agents', 'bonusTypes', 'totalAmount'));
     }
 
