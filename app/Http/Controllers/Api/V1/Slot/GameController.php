@@ -75,7 +75,7 @@ class GameController extends Controller
         // }])
         //     ->get();
         $gameLists = HotGame::all();
-        return $gameLists;
+        // return $gameLists;
 
         return $this->success(HotGameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
     }
