@@ -45,7 +45,7 @@ class GameController extends Controller
         }])->where('id', $gameTypeID)->where('status', 1)
             ->first();
 
-        return $gameType;
+        // return $gameType;
         return $this->success(GameProviderResource::collection($gameType->products), 'Game Detail Successfully');
     }
 
