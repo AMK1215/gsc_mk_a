@@ -21,6 +21,7 @@ class GameDetailResource extends JsonResource
             'name' => $this->name,
             'game_type_id' => $this->game_type_id,
             'provider_id' => $this->product_id,
+            'provider_code' => $this->product->code,
             'image' => $this->image_url,
         ];
     }
