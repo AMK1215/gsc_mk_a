@@ -19,7 +19,7 @@ class AllGameResource extends JsonResource
             'name' => $this->name,
             'code' => $this->code,
             'img' => $this->img_url,
-            'providers' => ""  
+            'providers' => GameProviderResource::collection($this->products)  
         ];
     }
 }
