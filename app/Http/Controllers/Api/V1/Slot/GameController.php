@@ -28,6 +28,12 @@ class GameController extends Controller
         return $this->success(GameTypeResource::collection($gameTypes));
     }
 
+    public function allProviders()
+    {
+        $types = GameType::active()->get();
+        return $types;
+    }
+
     //providers
     public function gameTypeProducts($gameTypeID)
     {

@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function (
 
     //games api
     Route::get('game_types', [GameController::class, 'gameType']);
+    Route::get('/all_providers', [GameController::class, 'allProviders']);
     Route::get('providers/{id}', [GameController::class, 'gameTypeProducts']);
     Route::get('game_lists/{product_id}/{game_type_id}', action: [GameController::class, 'gameList']);
     Route::get('hot_games', [GameController::class, 'HotgameList']);
