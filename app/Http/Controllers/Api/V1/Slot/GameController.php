@@ -13,6 +13,7 @@ use App\Http\Resources\Slot\HotGameListResource;
 use App\Models\Admin\GameList;
 use App\Models\Admin\GameType;
 use App\Models\Admin\Product;
+use App\Models\HotGame;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,14 +66,15 @@ class GameController extends Controller
     //hot_games
     public function HotgameList()
     {
-        $gameLists = Product::whereHas('gameLists', function ($query) {
-            $query->where('hot_status', 1);
-        })->with(['gameLists' => function ($query) {
-            $query->where('hot_status', 1);
-            $query->where('status', 1);
-            $query->with('gameType');
-        }])
-            ->get();
+        // $gameLists = Product::whereHas('gameLists', function ($query) {
+        //     $query->where('hot_status', 1);
+        // })->with(['gameLists' => function ($query) {
+        //     $query->where('hot_status', 1);
+        //     $query->where('status', 1);
+        //     $query->with('gameType');
+        // }])
+        //     ->get();
+        $gameLists = HotGame::all();
 
         return $this->success(HotGameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
     }
