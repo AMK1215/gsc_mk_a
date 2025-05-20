@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Slot;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\V1\AllGameResource;
 use App\Http\Resources\Api\V1\GameProviderResource;
 use App\Http\Resources\Api\V1\GameTypeResource;
 use App\Http\Resources\GameDetailResource;
@@ -31,7 +32,8 @@ class GameController extends Controller
     public function allProviders()
     {
         $types = GameType::active()->get();
-        return $types;
+        
+        return $this->success(AllGameResource::collection($types));
     }
 
     //providers
