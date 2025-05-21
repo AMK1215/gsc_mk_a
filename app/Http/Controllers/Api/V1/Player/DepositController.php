@@ -25,9 +25,9 @@ class DepositController extends Controller
 
             $pendingDeposit = DepositRequest::where('user_id', $player->id)->where('status', 0)->first();
 
-            if (!$pendingDeposit) {
-                return $this->error('', 'ငွေသွင်းအတည်ပြုရန် ခေတ္တစောင့်ပါ', 401);
-            }
+            // if (!$pendingDeposit) {
+            //     return $this->error('', 'ငွေသွင်းအတည်ပြုရန် ခေတ္တစောင့်ပါ', 401);
+            // }
             // image
             $image = $request->file('image');
             $ext = $image->getClientOriginalExtension();
