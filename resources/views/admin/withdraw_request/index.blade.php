@@ -34,13 +34,13 @@
                         <div class="col-md-3">
                             <div class="input-group input-group-static mb-4">
                                 <label for="">Start Date</label>
-                                <input type="text" class="form-control" id="datetime" name="start_date" value="{{request()->get('start_date')}}">
+                                <input type="date" class="form-control" id="datetime" name="startDate" value="{{request()->get('startDate')}}">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="input-group input-group-static mb-4">
                                 <label for="">EndDate</label>
-                                <input type="text" class="form-control" id="datetime" name="end_date" value="{{request()->get('end_date')}}">
+                                <input type="date" class="form-control" id="datetime" name="endDate" value="{{request()->get('endDate')}}">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -76,32 +76,34 @@
                 </form>
             </div>
             <div class="table-responsive">
-                <table class="table table-flush" id="users-search">
+                <table class="table table-flush" >
                     <thead class="thead-light">
+                        <tr  class="text-center">
                         <th>#</th>
                         <th>PlayerId</th>
                         <th>PlayerName</th>
                         <th>AgentName</th>
                         <th>Requested Amount</th>
-                        <th>Before Amount</th>
-                        <th>After Amount</th>
+                        {{-- <th>Before Amount</th>
+                        <th>After Amount</th> --}}
                         <th>Payment Method</th>
                         <th>Bank Account Name</th>
                         <th>Bank Account Number</th>
                         <th>Status</th>
                         <th>Created_at</th>
                         <th>Action</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @foreach ($withdraws as $withdraw)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
+                        <tr class="text-center" style="font-size: 15px !important;">
+                            <td>{{ ($withdraws->currentPage() - 1 ) * $withdraws->perPage() + $loop->iteration }}</td>
                             <td>{{$withdraw->user->user_name}}</td>
                             <td>{{$withdraw->user->name}}</td>
                             <td><span class="badge text-bg-warning text-white ">{{$withdraw->user->parent->name}}</span></td>
                             <td class="amount">{{ number_format($withdraw->amount) }}</td>
-                            <td class="amount">{{ number_format($withdraw->before_amount) }}</td>
-                            <td class="amount">{{ number_format($withdraw->after_amount) }}</td>
+                            {{-- <td class="amount">{{ number_format($withdraw->before_amount) }}</td>
+                            <td class="amount">{{ number_format($withdraw->after_amount) }}</td> --}}
                             <td>{{$withdraw->paymentType->name}}</td>
                             <td>{{$withdraw->account_name}}</td>
                             <td>{{$withdraw->account_no}}</td>
@@ -150,6 +152,9 @@
                         <th colspan="6"></th>
                     </tr>
                 </table>
+                   <div class="d-flex justify-content-end">
+                        {{ $withdraws->links() }}
+                    </div>
             </div>
         </div>
     </div>

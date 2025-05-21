@@ -65,6 +65,7 @@
     <script>
         var errorMessage = @json(session('error'));
         var successMessage = @json(session('success'));
+        console.log(successMessage);
         @if(session() -> has('success'))
         Swal.fire({
             title: successMessage,

@@ -19,26 +19,41 @@
                         </div>
                     </div>
                 </div>
+                    <form action="" method="GET">
+                                <div class="row m-3">
+                                     <div class="col-md-3 ">
+                                        <div class="input-group mb-4">
+                                            <input type="text" class="form-control border border-dark p-2" name="search" value="{{request()->search}}" placeholder="Search .....">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="submit" class="btn btn-primary">Search</button>
+                                    </div>
+                                </div>
+                    </form>
                 <div class="table-responsive">
                     <table class="table table-flush">
                         <thead class="thead-light">
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>AgentId</th>
-                            <th>ReferralCode</th>
-                            <th>Phone</th>
-                            <th>Status</th>
-                            <th>Balance</th>
-                            <th>Action</th>
-                            <th>Transfer</th>
+                            <tr class="text-center">
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>AgentId</th>
+                                <th>ReferralCode</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Balance</th>
+                                <th>Action</th>
+                                <th>Transfer</th>
+                                 <th>Register Time</th>
+                            </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="text-center" style="font-size: 15px !important;">
                             {{-- kzt --}}
                             @if (isset($users))
                                 @if (count($users) > 0)
                                     @foreach ($users as $user)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
+                                          <td>{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
                                             <td>
                                                 <span class="d-block">{{ $user->name }}</span>
 
@@ -46,6 +61,8 @@
                                             <td>{{ $user->user_name }}</td>
                                             <td>{{ $user->referral_code }}</td>
                                             <td>{{ $user->phone }}</td>
+
+
                                             <td>
                                                 <small
                                                     class="badge bg-gradient-{{ $user->status == 1 ? 'success' : 'danger' }}">{{ $user->status == 1 ? 'active' : 'inactive' }}</small>
@@ -212,6 +229,7 @@
                                                         </a>
 
                                             </td>
+                                            <td>{{ $user->created_at->format('H:i:s d-m-Y') }}</td>
                                         </tr>
                                     @endforeach
                                 @else
@@ -224,6 +242,9 @@
                             @endif
                         </tbody>
                     </table>
+                            <div class="d-flex justify-content-end">
+            {{$users->links()}}
+        </div>
                 </div>
             </div>
         </div>

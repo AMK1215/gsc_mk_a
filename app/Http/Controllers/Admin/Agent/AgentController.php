@@ -35,8 +35,14 @@ class AgentController extends Controller
             Response::HTTP_FORBIDDEN,
             '403 Forbidden |You cannot  Access this page because you do not have permission'
         );
-
-        $users = User::query()->agent()->get();
+        $search = request()->search;
+        $users = User::query()->agent()->when($search,function($query) use($search) {
+            $query->where(function ($q) use ($search) {
+                    $q->where('user_name', 'like', '%' . $search . '%')
+                      ->orWhere('created_at', 'like', '%' . $search . '%')
+                      ->orWhere('phone', 'like', '%' . $search . '%');
+            });
+        })->paginate(15);
 
         return view('admin.agent.index', compact('users'));
     }
