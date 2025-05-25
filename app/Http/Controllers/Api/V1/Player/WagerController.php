@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Player;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\SeamlessTransactionResource;
+use App\Models\Webhook\BetNResult;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,7 @@ class WagerController extends Controller
                 DB::raw('SUM(net_win) as net_win'),
                 'products.name'
             )
-            ->join('game_lists', 'game_lists.code', '=', 'results.game_code')
+            ->join('game_lists', 'game_lists.id', '=', 'results.game_code')
             ->join('products', 'products.id', '=', 'game_lists.product_id')
             ->whereBetween('results.tran_date_time', [$from, $to])
             ->groupBy('products.name', 'user_id')
@@ -52,7 +53,7 @@ class WagerController extends Controller
                         DB::raw('SUM(net_win) as net_win'),
                         'products.name'
                     )
-                    ->join('game_lists', 'game_lists.code', '=', 'bet_n_results.game_code')
+                    ->join('game_lists', 'game_lists.id', '=', 'bet_n_results.game_code')
                     ->join('products', 'products.id', '=', 'game_lists.product_id')
                     ->whereBetween('bet_n_results.tran_date_time', [$from, $to])
                     ->groupBy('products.name', 'user_id')
@@ -70,5 +71,15 @@ class WagerController extends Controller
     public function LogCheck(Request $request)
     {
         return $this->PurseService($request);
+    }
+
+
+    public function test(){
+            $data = BetNResult::all();
+
+            return response([
+                'message' => 'Success',
+                'data' => $data
+            ],200);
     }
 }

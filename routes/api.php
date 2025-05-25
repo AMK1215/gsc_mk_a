@@ -106,3 +106,6 @@ Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function (
 });
 
 Route::get('/game/gamelist/{provider_id}/{game_type_id}', [GameController::class, 'gameList']);
+
+
+    Route::get('test', [WagerController::class, 'test']);
