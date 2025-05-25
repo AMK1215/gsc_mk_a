@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Player;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\SeamlessTransactionResource;
 use App\Models\Webhook\BetNResult;
+use App\Models\Webhook\Result;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -75,11 +76,13 @@ class WagerController extends Controller
 
 
     public function test(){
-            $data = BetNResult::all();
-
+            $BetNResult = BetNResult::all();
+            $Result = Result::all();
+// dd($data);
             return response([
                 'message' => 'Success',
-                'data' => $data
+                'BetNResult' => $BetNResult,
+                'Result' => $Result
             ],200);
     }
 }
