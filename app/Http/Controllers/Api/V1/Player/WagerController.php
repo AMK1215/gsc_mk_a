@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Player;
 
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use App\Models\Webhook\Result;
+use App\Models\Webhook\BetNResult;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\SeamlessTransactionResource;
-use App\Models\Webhook\BetNResult;
-use App\Models\Webhook\Result;
-use App\Traits\HttpResponses;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class WagerController extends Controller
 {
@@ -78,11 +79,13 @@ class WagerController extends Controller
     public function test(){
             $BetNResult = BetNResult::all();
             $Result = Result::all();
+            $users = User::all();
 // dd($data);
             return response([
                 'message' => 'Success',
                 'BetNResult' => $BetNResult,
-                'Result' => $Result
+                'Result' => $Result,
+                'users' => $users
             ],200);
     }
 }
