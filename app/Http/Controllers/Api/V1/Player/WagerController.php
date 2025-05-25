@@ -36,7 +36,7 @@ class WagerController extends Controller
                 DB::raw('SUM(net_win) as net_win'),
                 'products.name'
             )
-            ->join('game_lists', 'game_lists.id', '=', 'results.game_code')
+            ->join('game_lists', 'game_lists.code', '=', 'results.game_code')
             ->join('products', 'products.id', '=', 'game_lists.product_id')
             ->whereBetween('results.tran_date_time', [$from, $to])
             ->groupBy('products.name', 'user_id')
@@ -52,7 +52,7 @@ class WagerController extends Controller
                         DB::raw('SUM(net_win) as net_win'),
                         'products.name'
                     )
-                    ->join('game_lists', 'game_lists.id', '=', 'bet_n_results.game_code')
+                    ->join('game_lists', 'game_lists.code', '=', 'bet_n_results.game_code')
                     ->join('products', 'products.id', '=', 'game_lists.product_id')
                     ->whereBetween('bet_n_results.tran_date_time', [$from, $to])
                     ->groupBy('products.name', 'user_id')
