@@ -40,13 +40,13 @@ class PlayerController extends Controller
         $agentIds = [$user->id];
         $agents = [];
 
-    $startDate = $request->startDate
-    ? Carbon::parse($request->startDate . ' 00:00:00', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
-    : Carbon::today('Asia/Yangon')->startOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
+    $startDate = $request->startDate;
+    // ? Carbon::parse($request->startDate . ' 00:00:00', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
+    // : Carbon::today('Asia/Yangon')->startOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
 
-$endDate = $request->endDate
-    ? Carbon::parse($request->endDate . ' 23:59:59', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
-    : Carbon::today('Asia/Yangon')->endOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
+$endDate = $request->endDate;
+    // ? Carbon::parse($request->endDate . ' 23:59:59', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
+    // : Carbon::today('Asia/Yangon')->endOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
 
         if ($user->hasRole('Master')) {
             $agentIds = User::where('agent_id', $user->id)->pluck('id')->toArray();

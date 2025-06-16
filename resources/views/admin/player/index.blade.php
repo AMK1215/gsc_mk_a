@@ -81,7 +81,7 @@
             <th>RegisterIp</th>
             <th>RegisterTime</th>
             <th>LastLoginIp</th>
-            <th>LastLoginTime</th>
+            {{-- <th>LastLoginTime</th> --}}
             <th>Action</th>
             <th>Transaction</th>
             </tr>
@@ -91,7 +91,7 @@
             @if(count($users)>0)
             @foreach ($users as $user)
             <tr class="text-center" style="font-size: 15px !important">
-              <td>{{ $loop->iteration }}</td>
+           <td>{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
               <td>
                 <span class="d-block">{{ $user->user_name }}</span>
               </td>
@@ -107,7 +107,7 @@
               <td>{{ $user->userLog->first()->register_ip ?? '' }}</td>
               <td>{{ $user->created_at->format('H:i:s d-m-Y') }}</td>
               <td>{{ $user->userLog->last()->ip_address ?? '' }}</td>
-              <td>{{ $user->userLog->last()->created_at->format('H:i:s d-m-Y') ?? '' }}</td>
+              {{-- <td>{{ $user->userLog->last()->created_at->format('H:i:s d-m-Y') ?? '' }}</td> --}}
               <td>
                 @if ($user->status == 1)
                 <a onclick="event.preventDefault(); document.getElementById('banUser-{{ $user->id }}').submit();" class="me-2" href="#" data-bs-toggle="tooltip" data-bs-original-title="Active Player">
