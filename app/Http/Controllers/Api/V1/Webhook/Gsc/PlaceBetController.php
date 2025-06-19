@@ -22,6 +22,15 @@ class PlaceBetController extends Controller
 
     public function placeBet(SlotWebhookRequest $request)
     {
+        // Log incoming request
+        Log::info('PlaceBet: Request received', [
+            'user_id' => $request->getMember()->id,
+            'member_name' => $request->getMember()->user_name,
+            'message_id' => $request->getMessageID(),
+            'transaction_count' => count($request->getTransactions()),
+            'request_data' => $request->all(),
+        ]);
+
         $userId = $request->getMember()->id;
         $transactions = $request->getTransactions();
 
@@ -31,7 +40,15 @@ class PlaceBetController extends Controller
         }, $transactions);
         $wagerIds = array_filter($wagerIds);
 
+        Log::info('PlaceBet: Extracted wager IDs', [
+            'wager_ids' => $wagerIds,
+            'total_wagers' => count($wagerIds),
+        ]);
+
         if (empty($wagerIds)) {
+            Log::warning('PlaceBet: No wager IDs found in request', [
+                'transactions' => $transactions,
+            ]);
             return response()->json([
                 'message' => 'WagerID is required for all transactions.',
             ], 400);
@@ -43,34 +60,67 @@ class PlaceBetController extends Controller
         $lockUser = false;
         $lockWagers = [];
 
+        Log::info('PlaceBet: Attempting to acquire user lock', [
+            'user_id' => $userId,
+            'max_attempts' => $maxAttempts,
+        ]);
+
         while ($attempts < $maxAttempts && ! $lockUser) {
             $lockUser = Redis::set("wallet:lock:$userId", true, 'EX', 15, 'NX');
             $attempts++;
 
             if (! $lockUser) {
+                Log::warning('PlaceBet: User lock acquisition failed, retrying', [
+                    'user_id' => $userId,
+                    'attempt' => $attempts,
+                ]);
                 sleep(1);
             }
         }
 
         if (! $lockUser) {
+            Log::error('PlaceBet: Failed to acquire user lock after all attempts', [
+                'user_id' => $userId,
+                'attempts' => $attempts,
+            ]);
             return response()->json([
                 'message' => 'Another transaction is currently processing for this user. Please try again later.',
                 'userId' => $userId,
             ], 409);
         }
 
+        Log::info('PlaceBet: User lock acquired successfully', [
+            'user_id' => $userId,
+            'attempts' => $attempts,
+        ]);
+
         // Acquire locks for all wager_ids
         foreach ($wagerIds as $wagerId) {
             $attempts = 0;
             $lockWager = false;
+            
+            Log::info('PlaceBet: Attempting to acquire wager lock', [
+                'wager_id' => $wagerId,
+                'max_attempts' => $maxAttempts,
+            ]);
+            
             while ($attempts < $maxAttempts && ! $lockWager) {
                 $lockWager = Redis::set("wager:lock:$wagerId", true, 'EX', 15, 'NX');
                 $attempts++;
                 if (! $lockWager) {
+                    Log::warning('PlaceBet: Wager lock acquisition failed, retrying', [
+                        'wager_id' => $wagerId,
+                        'attempt' => $attempts,
+                    ]);
                     sleep(1);
                 }
             }
             if (! $lockWager) {
+                Log::error('PlaceBet: Failed to acquire wager lock, releasing all locks', [
+                    'wager_id' => $wagerId,
+                    'attempts' => $attempts,
+                    'locked_wagers' => $lockWagers,
+                ]);
                 // Release all locks and fail
                 Redis::del("wallet:lock:$userId");
                 foreach ($lockWagers as $lockedWagerId) {
@@ -83,11 +133,24 @@ class PlaceBetController extends Controller
                 ], 409);
             }
             $lockWagers[] = $wagerId;
+            Log::info('PlaceBet: Wager lock acquired successfully', [
+                'wager_id' => $wagerId,
+                'attempts' => $attempts,
+            ]);
         }
+
+        Log::info('PlaceBet: All locks acquired successfully', [
+            'user_id' => $userId,
+            'locked_wagers' => $lockWagers,
+        ]);
 
         $validator = $request->check();
 
         if ($validator->fails()) {
+            Log::error('PlaceBet: Validation failed', [
+                'validation_errors' => $validator->getResponse(),
+                'user_id' => $userId,
+            ]);
             Redis::del("wallet:lock:$userId");
             foreach ($lockWagers as $wagerId) {
                 Redis::del("wager:lock:$wagerId");
@@ -96,9 +159,15 @@ class PlaceBetController extends Controller
             return $validator->getResponse();
         }
 
+        Log::info('PlaceBet: Validation passed successfully');
+
         $transactions = $validator->getRequestTransactions();
 
         if (! is_array($transactions) || empty($transactions)) {
+            Log::error('PlaceBet: Invalid transaction data format', [
+                'transactions' => $transactions,
+                'user_id' => $userId,
+            ]);
             Redis::del("wallet:lock:$userId");
             foreach ($lockWagers as $wagerId) {
                 Redis::del("wager:lock:$wagerId");
@@ -110,14 +179,44 @@ class PlaceBetController extends Controller
             ], 400);
         }
 
+        Log::info('PlaceBet: Transaction data validated', [
+            'transaction_count' => count($transactions),
+            'transactions' => $transactions,
+        ]);
+
         $before_balance = $request->getMember()->balanceFloat;
         $event = $this->createEvent($request);
 
+        Log::info('PlaceBet: Starting database transaction', [
+            'before_balance' => $before_balance,
+            'event_id' => $event->id,
+            'user_id' => $userId,
+        ]);
+
         DB::beginTransaction();
         try {
+            Log::info('PlaceBet: Inserting bets', [
+                'transaction_count' => count($transactions),
+                'event_id' => $event->id,
+            ]);
+
             $message = $this->insertBets($transactions, $event);
 
-            foreach ($transactions as $transaction) {
+            Log::info('PlaceBet: Bets inserted successfully', [
+                'message' => $message,
+                'event_id' => $event->id,
+            ]);
+
+            foreach ($transactions as $index => $transaction) {
+                Log::info('PlaceBet: Processing transaction', [
+                    'transaction_index' => $index,
+                    'wager_id' => $transaction->WagerID,
+                    'transaction_id' => $transaction->TransactionID,
+                    'amount' => $transaction->TransactionAmount,
+                    'game_type' => $transaction->GameType,
+                    'product_id' => $transaction->ProductID,
+                ]);
+
                 $fromUser = $request->getMember();
                 $toUser = User::adminUser();
 
@@ -128,11 +227,26 @@ class PlaceBetController extends Controller
                     ->first();
                 $rate = $game_type_product->rate;
 
+                Log::info('PlaceBet: Game configuration retrieved', [
+                    'game_type_id' => $game_type->id,
+                    'product_id' => $product->id,
+                    'rate' => $rate,
+                    'game_type_product_id' => $game_type_product->id,
+                ]);
+
                 $meta = [
                     'wager_id' => $transaction->WagerID,
                     'event_id' => $request->getMessageID(),
                     'transaction_id' => $transaction->TransactionID,
                 ];
+
+                Log::info('PlaceBet: Processing transfer', [
+                    'from_user' => $fromUser->id,
+                    'to_user' => $toUser->id,
+                    'amount' => $transaction->TransactionAmount,
+                    'rate' => $rate,
+                    'meta' => $meta,
+                ]);
 
                 $this->processTransfer(
                     $fromUser,
@@ -142,16 +256,42 @@ class PlaceBetController extends Controller
                     $rate,
                     $meta
                 );
+
+                Log::info('PlaceBet: Transfer completed successfully', [
+                    'transaction_index' => $index,
+                    'wager_id' => $transaction->WagerID,
+                ]);
             }
 
             $request->getMember()->wallet->refreshBalance();
             $after_balance = $request->getMember()->balanceFloat;
 
+            Log::info('PlaceBet: Balance refreshed', [
+                'before_balance' => $before_balance,
+                'after_balance' => $after_balance,
+                'balance_change' => $after_balance - $before_balance,
+            ]);
+
             DB::commit();
+            
+            Log::info('PlaceBet: Database transaction committed successfully');
+
             Redis::del("wallet:lock:$userId");
             foreach ($lockWagers as $wagerId) {
                 Redis::del("wager:lock:$wagerId");
             }
+
+            Log::info('PlaceBet: All locks released successfully', [
+                'user_id' => $userId,
+                'released_wagers' => $lockWagers,
+            ]);
+
+            Log::info('PlaceBet: Request completed successfully', [
+                'user_id' => $userId,
+                'before_balance' => $before_balance,
+                'after_balance' => $after_balance,
+                'total_transactions' => count($transactions),
+            ]);
 
             return SlotWebhookService::buildResponse(
                 SlotWebhookResponseCode::Success,
@@ -159,13 +299,29 @@ class PlaceBetController extends Controller
                 $before_balance
             );
         } catch (\Exception $e) {
+            Log::error('PlaceBet: Exception occurred during processing', [
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'error_trace' => $e->getTraceAsString(),
+                'user_id' => $userId,
+                'before_balance' => $before_balance,
+            ]);
+
             DB::rollBack();
             Redis::del("wallet:lock:$userId");
             foreach ($lockWagers as $wagerId) {
                 Redis::del("wager:lock:$wagerId");
             }
 
+            Log::info('PlaceBet: Database rolled back and locks released after error');
+
             if (str_contains($e->getMessage(), 'Duplicate transaction detected')) {
+                Log::warning('PlaceBet: Duplicate transaction detected, returning duplicate response', [
+                    'error_message' => $e->getMessage(),
+                    'user_id' => $userId,
+                ]);
+
                 return SlotWebhookService::buildResponse(
                     SlotWebhookResponseCode::DuplicateTransaction,
                     $before_balance,
@@ -173,7 +329,7 @@ class PlaceBetController extends Controller
                 );
             }
 
-            Log::error('Error during placeBet', ['error' => $e]);
+            Log::error('PlaceBet: Error during placeBet', ['error' => $e]);
 
             return response()->json([
                 'message' => $e->getMessage(),
