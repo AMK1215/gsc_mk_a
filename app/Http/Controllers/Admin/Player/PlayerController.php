@@ -40,8 +40,13 @@ class PlayerController extends Controller
         $agentIds = [$user->id];
         $agents = [];
 
-        $startDate = $request->start_date ? Carbon::parse($request->start_date)->format('Y-m-d H:i') : Carbon::today()->startOfDay()->format('Y-m-d H:i');
-        $endDate = $request->end_date ? Carbon::parse($request->end_date)->format('Y-m-d H:i') : Carbon::today()->endOfDay()->format('Y-m-d H:i');
+    $startDate = $request->startDate;
+    // ? Carbon::parse($request->startDate . ' 00:00:00', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
+    // : Carbon::today('Asia/Yangon')->startOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
+
+$endDate = $request->endDate;
+    // ? Carbon::parse($request->endDate . ' 23:59:59', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
+    // : Carbon::today('Asia/Yangon')->endOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
 
         if ($user->hasRole('Master')) {
             $agentIds = User::where('agent_id', $user->id)->pluck('id')->toArray();
@@ -59,7 +64,17 @@ class PlayerController extends Controller
             })
             ->whereIn('agent_id', $agentIds)
             ->orderByDesc('id')
-            ->get();
+            ->paginate(15)
+            ->appends([
+                'startDate' => $request->startDate,
+                'endDate' => $request->endDate,
+                'player_id' => $request->player_id,
+                'agent_id' => $request->agent_id,
+                'payment_type_id' => $request->payment_type_id,
+                'status' => $request->status,
+            ]);
+
+
 
             // dd($users);
         return view('admin.player.index', compact('users', 'agents'));
@@ -114,7 +129,7 @@ class PlayerController extends Controller
 
             return redirect()->back()
                 ->with('success', 'Player created successfully')
-                ->with('url', config('app.url'))
+                ->with('url', 'https://moneyking7.com')
                 ->with('password', $request->password)
                 ->with('user_name', $player->user_name);
         } catch (Exception $e) {

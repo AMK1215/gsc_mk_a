@@ -1,5 +1,5 @@
 @extends('admin_layouts.app')@section('content')
-<div class="row mt-4">
+<div class="row mt-4 mb-4">
   <div class="col-12">
     <div class="card">
       <!-- Card header -->
@@ -46,13 +46,13 @@
             <div class="col-md-3">
               <div class="input-group input-group-static mb-4">
                 <label for="">Start Date</label>
-                <input type="text" class="form-control" name="start_date" value="{{request()->get('start_date')}}">
+                <input type="date" class="form-control" name="startDate" value="{{request()->get('startDate')}}">
               </div>
             </div>
             <div class="col-md-3">
               <div class="input-group input-group-static mb-4">
                 <label for="">EndDate</label>
-                <input type="text" class="form-control" name="end_date" value="{{request()->get('end_date')}}">
+                <input type="date" class="form-control" name="endDate" value="{{request()->get('endDate')}}">
               </div>
             </div>
             <div class="col-md-3">
@@ -66,9 +66,10 @@
         </form>
       </div>
       <div class="table-responsive">
-        <table class="table table-flush" id="users-search">
-          <thead class="thead-light">
-            <th>#</th>
+        <table class="table table-flush" >
+          <thead class="thead-light " >
+            <tr class="text-center">
+                  <th>#</th>
             <th>PlayerID</th>
             @can('master_access')
             <th>AgentName</th>
@@ -80,16 +81,17 @@
             <th>RegisterIp</th>
             <th>RegisterTime</th>
             <th>LastLoginIp</th>
-            <th>LastLoginTime</th>
+            {{-- <th>LastLoginTime</th> --}}
             <th>Action</th>
             <th>Transaction</th>
+            </tr>
           </thead>
           <tbody>
             @if(isset($users))
             @if(count($users)>0)
             @foreach ($users as $user)
-            <tr>
-              <td>{{ $loop->iteration }}</td>
+            <tr class="text-center" style="font-size: 15px !important">
+           <td>{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
               <td>
                 <span class="d-block">{{ $user->user_name }}</span>
               </td>
@@ -103,9 +105,9 @@
               </td>
               <td>{{number_format($user->balanceFloat,2) }} </td>
               <td>{{ $user->userLog->first()->register_ip ?? '' }}</td>
-              <td>{{ $user->created_at }}</td>
+              <td>{{ $user->created_at->format('H:i:s d-m-Y') }}</td>
               <td>{{ $user->userLog->last()->ip_address ?? '' }}</td>
-              <td>{{ $user->userLog->last()->created_at ?? '' }}</td>
+              {{-- <td>{{ $user->userLog->last()->created_at->format('H:i:s d-m-Y') ?? '' }}</td> --}}
               <td>
                 @if ($user->status == 1)
                 <a onclick="event.preventDefault(); document.getElementById('banUser-{{ $user->id }}').submit();" class="me-2" href="#" data-bs-toggle="tooltip" data-bs-original-title="Active Player">
@@ -264,6 +266,9 @@
 
           </tbody>
         </table>
+        <div class="d-flex justify-content-end">
+            {{$users->links()}}
+        </div>
       </div>
     </div>
   </div>
@@ -285,6 +290,7 @@
       });
     });
   };
+
 </script>
 <script>
   var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
@@ -292,4 +298,6 @@
     return new bootstrap.Tooltip(tooltipTriggerEl)
   })
 </script>
+
+
 @endsection

@@ -77,6 +77,7 @@ Route::group([
     Route::resource('text', BannerTextController::class);
     Route::resource('/promotions', PromotionController::class);
     Route::resource('products', ProductController::class);
+
     Route::resource('contact', ContactController::class);
     Route::get('bonustype', [BonusTypeController::class, 'get'])->name('bonustype');
     Route::resource('bonus', BonusController::class);

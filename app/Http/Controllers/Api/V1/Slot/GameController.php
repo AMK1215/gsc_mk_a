@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Slot;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\V1\AllGameResource;
 use App\Http\Resources\Api\V1\GameProviderResource;
 use App\Http\Resources\Api\V1\GameTypeResource;
 use App\Http\Resources\GameDetailResource;
@@ -12,6 +13,7 @@ use App\Http\Resources\Slot\HotGameListResource;
 use App\Models\Admin\GameList;
 use App\Models\Admin\GameType;
 use App\Models\Admin\Product;
+use App\Models\HotGame;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +30,13 @@ class GameController extends Controller
         return $this->success(GameTypeResource::collection($gameTypes));
     }
 
+    public function allProviders()
+    {
+        $types = GameType::active()->get();
+        
+        return $this->success(AllGameResource::collection($types));
+    }
+
     //providers
     public function gameTypeProducts($gameTypeID)
     {
@@ -37,6 +46,7 @@ class GameController extends Controller
         }])->where('id', $gameTypeID)->where('status', 1)
             ->first();
 
+        // return $gameType;
         return $this->success(GameProviderResource::collection($gameType->products), 'Game Detail Successfully');
     }
 
@@ -47,8 +57,8 @@ class GameController extends Controller
             ->where('product_id', $product_id)
             ->where('game_type_id', $game_type_id)
             ->where('status', 1)
-            ->where('game_name', 'like', '%'.$request->name.'%')
-            ->paginate(9);
+            ->where('name', 'like', '%' . $request->name . '%')
+            ->get();
 
         return GameDetailResource::collection($gameLists);
     }
@@ -56,14 +66,16 @@ class GameController extends Controller
     //hot_games
     public function HotgameList()
     {
-        $gameLists = Product::whereHas('gameLists', function ($query) {
-            $query->where('hot_status', 1);
-        })->with(['gameLists' => function ($query) {
-            $query->where('hot_status', 1);
-            $query->where('status', 1);
-            $query->with('gameType');
-        }])
-            ->get();
+        // $gameLists = Product::whereHas('gameLists', function ($query) {
+        //     $query->where('hot_status', 1);
+        // })->with(['gameLists' => function ($query) {
+        //     $query->where('hot_status', 1);
+        //     $query->where('status', 1);
+        //     $query->with('gameType');
+        // }])
+        //     ->get();
+        $gameLists = HotGame::all();
+        // return $gameLists;
 
         return $this->success(HotGameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
     }

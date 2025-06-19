@@ -5,7 +5,7 @@ namespace App\Http\Resources\Api\V1;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class GameTypeResource extends JsonResource
+class AllGameResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,12 @@ class GameTypeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        return[
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
-            'img' =>  $this->img_url
+            'img' => $this->img_url,
+            'providers' => GameProviderResource::collection($this->products)  
         ];
     }
 }

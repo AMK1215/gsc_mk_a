@@ -24,7 +24,7 @@ class BannerAdsController extends Controller
         $auth = Auth::user();
         $this->MasterAgentRoleCheck();
         $banners = $auth->hasPermission('master_access') ? BannerAds::query()->master()->latest()->get() : BannerAds::query()->agent()->latest()->get();
-
+        
         return view('admin.banner_ads.index', compact('banners'));
     }
 

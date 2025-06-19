@@ -26,12 +26,16 @@ class WithDrawRequestController extends Controller
             $agents = $user->children()->get();
         }
 
-        $startDate = $request->start_date ? Carbon::parse($request->start_date)->format('Y-m-d H:i') : Carbon::today()->startOfDay()->format('Y-m-d H:i');
-        $endDate = $request->end_date ? Carbon::parse($request->end_date)->format('Y-m-d H:i') : Carbon::today()->endOfDay()->format('Y-m-d H:i');
+        $startDate = $request->startDate
+            ? Carbon::parse($request->startDate . ' 00:00:00', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
+            : Carbon::today('Asia/Yangon')->startOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
 
+        $endDate = $request->endDate
+            ? Carbon::parse($request->endDate . ' 23:59:59', 'Asia/Yangon')->timezone('UTC')->format('Y-m-d H:i:s')
+            : Carbon::today('Asia/Yangon')->endOfDay()->timezone('UTC')->format('Y-m-d H:i:s');
         $withdraws = $this->getWithdrawRequestsQuery($request, $agentIds, $startDate, $endDate)
             ->latest()
-            ->get();
+            ->paginate(15);
 
         $paymentTypes = PaymentType::all();
 

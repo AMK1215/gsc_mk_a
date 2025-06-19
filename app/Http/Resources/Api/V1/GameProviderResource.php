@@ -16,10 +16,12 @@ class GameProviderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->provider_name,
-            'code' => $this->provider_code,
+            'name' => $this->name,
+            'code' => $this->code,
             'image' => $this->imgUrl,
-            'game_type_id' => $this->pivot->game_type_id,
+            'type_id' => $this->pivot->game_type_id,
+            // 'provider_id' => $this->pivot->product_id,
+            'short_name' => $this->short_name
         ];
     }
 }

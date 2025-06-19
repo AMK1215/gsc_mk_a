@@ -33,10 +33,10 @@
             <tr>
               <td class="text-sm font-weight-normal">{{ ++$key }}</td>
               <td>
-                <img width="100px" class="img-thumbnail" src="{{ $banner->mobile_image_url }}" alt="">
+                <img width="100px" class="img-thumbnail" src="{{ asset('assets/img/banners_ads/'. $banner->mobile_image) }}" alt="">
               </td>
               <td>
-                <img width="100px" class="img-thumbnail" src="{{ $banner->desktop_image_url }}" alt="">
+                <img width="100px" class="img-thumbnail" src="{{asset('assets/img/banners_ads/'. $banner->desktop_image) }}" alt="">
               </td>
               <td class="text-sm font-weight-normal">{{ $banner->agent->name }}</td>
               <td>
