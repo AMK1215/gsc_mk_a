@@ -14,6 +14,11 @@ class AdsBannerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // Return empty array if resource is null or empty
+        if (!$this->resource) {
+            return [];
+        }
+
         return [
            // 'mobile_image' => $this->mobile_image_url,
             'desktop_image' => $this->desktop_image_url,
