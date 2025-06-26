@@ -25,8 +25,8 @@ class ppGamelist extends Command
      */
     public function handle()
     {
-        $inputFilePath = base_path('app/Console/Commands/json_data/pp.json');
-        $outputFilePath = base_path('app/Console/Commands/data/pplayModify.json');
+        $inputFilePath = base_path('app/Console/Commands/json_data/PPSlot.json');
+        $outputFilePath = base_path('app/Console/Commands/data/pplaySlotModify.json');
 
         // Load the JSON file
         $jsonData = file_get_contents($inputFilePath);

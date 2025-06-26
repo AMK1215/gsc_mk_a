@@ -14,7 +14,7 @@ class PPlaySlotSeeder extends Seeder
      */
     public function run(): void
     {
-        $json = File::get(base_path('app/Console/Commands/data/pplayModify.json'));
+        $json = File::get(base_path('app/Console/Commands/data/pplaySlotModify.json'));
         $data = json_decode($json);
         foreach ($data->ProviderGames as $obj) {
             GameList::create([
