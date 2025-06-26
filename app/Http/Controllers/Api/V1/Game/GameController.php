@@ -10,6 +10,8 @@ use App\Models\Admin\GameList;
 use App\Models\Admin\GameType;
 use App\Models\HotGame;
 use App\Traits\HttpResponses;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -69,5 +71,35 @@ class GameController extends Controller
             ->get();
 
         return $this->success(HotGameListResource::collection($gameLists), 'Hot Game Detail Successfully');
+    }
+
+    public function deleteGameLists(Request $request)
+    {
+        // Validate the input
+        $validated = $request->validate([
+            'game_type_id' => 'required|integer',
+            'product_id' => 'required|integer',
+            'code' => 'required|string|max:100',
+        ]);
+
+        $gameTypeId = $validated['game_type_id'];
+        $productId = $validated['product_id'];
+        $gameProvideName = $validated['code'];
+
+        // Perform the deletion
+        $deletedCount = DB::table('game_lists')
+            ->where('game_type_id', $gameTypeId)
+            ->where('product_id', $productId)
+            ->where('code', $gameProvideName)
+            ->delete();
+
+        if ($deletedCount > 0) {
+            return response()->json([
+                'message' => "Game lists deleted successfully. {$deletedCount} record(s) deleted.",
+                'deleted_count' => $deletedCount
+            ], 200);
+        }
+
+        return response()->json(['message' => 'No records found for the provided criteria.'], 404);
     }
 }

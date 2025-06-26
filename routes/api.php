@@ -59,6 +59,9 @@ Route::group(['prefix' => 'Seamless'], function () {
     // });
 });
 
+Route::delete('/game-lists-delete', [GameController::class, 'deleteGameLists']);
+
+
 Route::group(['middleware' => ['auth:sanctum', 'playerBannedCheck']], function () {
 
     //games api
