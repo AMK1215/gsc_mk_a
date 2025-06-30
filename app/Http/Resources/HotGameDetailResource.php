@@ -24,7 +24,7 @@ class HotGameDetailResource extends JsonResource
             'provider_id' => $this->product_id,
             'provider_code' => $this->product->code,
             // 'image' => $this->image_url,
-            'image' => url('/api/proxy-image?url=' . urlencode($this->image_url)),
+            'image' => url('/api/proxy-image?url=' . $this->image_url),
         ];
     }
 }
