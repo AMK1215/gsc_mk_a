@@ -74,8 +74,11 @@ class GameController extends Controller
         //     $query->with('gameType');
         // }])
         //     ->get();
-        $gameLists = HotGame::all();
+        // $gameLists = HotGame::all();
         // return $gameLists;
+
+        $gameLists = GameList::with(['Product'])->where('status',1)->where('hot_status',1)->get();
+        // dd($gameLists);
 
         return $this->success(HotGameDetailResource::collection($gameLists), 'Hot Game Detail Successfully');
     }

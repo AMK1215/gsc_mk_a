@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\GameList;
 use App\Models\Admin\Product;
+use App\Models\HotGame;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
@@ -108,6 +109,7 @@ class GameListController extends Controller
         $game = GameList::findOrFail($id);
         $game->hot_status = $game->hot_status == 1 ? 0 : 1;
         $game->save();
+
 
         return redirect()->route('admin.gameLists.index')->with('success', 'HotGame status updated successfully.');
     }
