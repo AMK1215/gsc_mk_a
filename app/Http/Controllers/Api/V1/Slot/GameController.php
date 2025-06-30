@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers\Api\V1\Slot;
 
-use App\Models\HotGame;
-use Illuminate\Http\Request;
-use App\Models\Admin\Product;
-use App\Traits\HttpResponses;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Api\V1\AllGameResource;
+use App\Http\Resources\Api\V1\GameProviderResource;
+use App\Http\Resources\Api\V1\GameTypeResource;
+use App\Http\Resources\GameDetailResource;
+use App\Http\Resources\GameListResource;
+use App\Http\Resources\HotGameDetailResource;
+use App\Http\Resources\Slot\HotGameListResource;
 use App\Models\Admin\GameList;
 use App\Models\Admin\GameType;
+use App\Models\Admin\Product;
+use App\Models\HotGame;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
-use App\Http\Resources\GameListResource;
-use App\Http\Resources\GameDetailResource;
-use App\Http\Resources\HotGameDetailResource;
-use App\Http\Resources\Api\V1\AllGameResource;
-use App\Http\Resources\Api\V1\GameTypeResource;
-use App\Http\Resources\Slot\HotGameListResource;
-use App\Http\Resources\Api\V1\GameProviderResource;
 
 class GameController extends Controller
 {
@@ -125,25 +124,5 @@ class GameController extends Controller
         }
 
         return response()->json(['message' => 'No records found for the provided criteria.'], 404);
-    }
-
-    public function proxyIndex(Request $request)
-    {
-        $url = $request->query('url');
-
-        if (!$url) return abort(400, 'URL required');
-
-        try {
-            $response = Http::get($url);
-
-            if ($response->successful()) {
-                return response($response->body(), 200)
-                    ->header('Content-Type', $response->header('Content-Type'));
-            }
-
-            return abort(403);
-        } catch (\Exception $e) {
-            return abort(403, 'Image fetch failed');
-        }
     }
 }
