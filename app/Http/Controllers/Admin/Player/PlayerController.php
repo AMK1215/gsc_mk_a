@@ -347,7 +347,7 @@ $endDate = $request->endDate;
 
         $nextNumber = $latestPlayer ? intval(substr($latestPlayer->user_name, 3)) + 1 : 1;
 
-        return 'MKM'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
+        return 'MKP'.str_pad($nextNumber, 6, '0', STR_PAD_LEFT);
     }
 
     private function getRefrenceId($prefix = 'REF')
